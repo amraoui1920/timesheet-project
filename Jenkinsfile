@@ -27,11 +27,13 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image and pushing to DockerHub"
-                    sh '''
-                        docker build -t amraoui123/timesheet:1.1 .
-                        docker login -u amraoui123 -p dckr_pat_zcvxvLyKcx_Dd-MXLYhzMkBZWzE
-                        docker push amraoui123/timesheet:1.1
-                    '''
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh '''
+                            docker build -t amraoui123/timesheet:1.1 .
+                            docker login -u $DOCKER_USER -p $DOCKER_PASS
+                            docker push amraoui123/timesheet:1.1
+                        '''
+                    }
                 }
             }
         }
